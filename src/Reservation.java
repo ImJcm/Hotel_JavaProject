@@ -1,11 +1,32 @@
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 public class Reservation {
-    private Customer customer = new Customer();    //고객
+    private UUID id;    //예약 번호
+    private Customer customer; //고객
     private HotelRoom room; // 예약할 방
-    private String customerName; //예약자 이름
-    private String phoneNum; //예약자 번호
-    private Date date; //예약 날짜
+    private OffsetDateTime date; //예약 날짜, ISO 8601형식 UTC 날짜 및 시간, Asia/Seoul로 지정
 
+    public Reservation(Customer cutomer, HotelRoom room, OffsetDateTime date) {
+        this.id = UUID.randomUUID();
+        this.customer = cutomer;
+        this.room = room;
+        this.date = date;
+    }
 
+    public UUID getUuid() {
+        return this.id;
+    }
+
+    public Customer getCutomer() {
+        return this.customer;
+    }
+    
+    public HotelRoom getHotelRoom() {
+        return this.room;
+    }
+
+    public OffsetDateTime getDate() {
+        return this.date;
+    }
 }
