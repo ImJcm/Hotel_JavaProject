@@ -15,4 +15,4 @@ public class HotelRoom {
     public int getroomcharge() {
         return this.roomCharge;
     }
-}
+} //

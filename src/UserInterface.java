@@ -64,13 +64,15 @@ public class UserInterface {
                     break;
                 case 2 :
                     // 예약 조회 메소드 호출
+                    printReservationlist_Customer();
+                    break;
                 case 3 :
                     // 예약 취소 메소드 호출
                 case 4 :
                     customer = null;    //고객 메뉴 종료 시, 고객 정보 초기화
                     start = false;      //시스템 종료
                     break;
-            } // swutch 끝
+            } // switch 끝
         } //while 끝
     } // method 끝
     
@@ -171,7 +173,7 @@ public class UserInterface {
                 if(customer.getMoney() < hotel.getroomlist().get(roomNum-1).getroomcharge()) {
                     System.out.println("소지금이 부족합니다. 다른 방을 선택해주세요.");
                 } else {
-                    Reservation newReservation = new Reservation(customer, hotel.getroomlist().get(roomNum), OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+                    Reservation newReservation = new Reservation(customer, hotel.getroomlist().get(roomNum-1), OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
                     hotel.getreservationlist().add(newReservation);
                     System.out.println("예약에 성공하였습니다.");
                     System.out.println("예약번호 : " + newReservation.getUuid());
@@ -191,7 +193,7 @@ public class UserInterface {
     }
 
     //Admin
-    private static void printReservationlist() {
+    private static void printReservationlist() {        //호텔측에서의 예약조희
         System.out.println("=====================예약 리스트=======================");
         hotel.getreservationlist().forEach((Reservation r) -> {
             System.out.println("예약순번 : " + hotel.getreservationlist().indexOf(r)+1);
@@ -204,6 +206,17 @@ public class UserInterface {
         });
     }
 
+    private static void printReservationlist_Customer() {   //손님측에서의 예약조회
+        System.out.println("============"+ customer.getName() + "님의 예약정보====================");
+        for (int i = 0; i < hotel.getreservationlist().size(); i++) {
+            if (hotel.getreservationlist().get(i).getCutomer().getName().equals(customer.getName())) {
+                System.out.println("보유 금액: " + hotel.getreservationlist().get(i).getCutomer().getMoney() );
+                System.out.println("호텔방: " + hotel.getreservationlist().get(i).getHotelRoom().getroomsize()) ;
+                System.out.println("예약 일자: " + hotel.getreservationlist().get(i).getDate() );
+                System.out.println("예약 번호: " + hotel.getreservationlist().get(i).getUuid() );
+            }
+        }
+    }
 
 
 } //class 끝

@@ -36,4 +36,4 @@ public class Hotel {
     public void setTotalfunds(int funds) {
         this.totalFunds = funds;
     }
-}
+} //

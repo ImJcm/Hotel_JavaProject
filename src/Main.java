@@ -4,4 +4,4 @@ public class Main {
         //userInterface.userDisplay(); // userdisplay 호출
         userInterface.userSelectDisplay(); //고객, 관리자 중 선택
     }
-}
+} //

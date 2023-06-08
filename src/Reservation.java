@@ -7,6 +7,7 @@ public class Reservation {
     private HotelRoom room; // 예약할 방
     private OffsetDateTime date; //예약 날짜, ISO 8601형식 UTC 날짜 및 시간, Asia/Seoul로 지정
 
+
     public Reservation(Customer cutomer, HotelRoom room, OffsetDateTime date) {
         this.id = UUID.randomUUID();
         this.customer = cutomer;

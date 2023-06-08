@@ -33,4 +33,4 @@ public class Customer {
     public void setMoney(int money) {
         this.money = money;
     }
-}
+} //
