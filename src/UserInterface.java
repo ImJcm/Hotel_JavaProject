@@ -1,6 +1,7 @@
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class UserInterface {
@@ -62,6 +63,8 @@ public class UserInterface {
                     break;
                 case 3 :
                     // 예약 취소 메소드 호출
+                    cancelReservation();
+                    break;
                 case 4 :
                     customer = null;    //고객 메뉴 종료 시, 고객 정보 초기화
                     start = false;      //시스템 종료
@@ -125,7 +128,7 @@ public class UserInterface {
             if(Pattern.matches(pattern, pNum)) {
                 chk = true;
             } else {
-                System.out.println("옳바른 전화번호가 아닙니다. 다시입력해주세요.");
+                System.out.println("올바른 전화번호가 아닙니다. 다시입력해주세요.");
                 System.out.print("전화번호를 입력해주세요 : ");
             }
         }
@@ -239,6 +242,54 @@ public class UserInterface {
             }
         }
     }
+    private static void cancelReservation() {
+        Scanner sc = new Scanner(System.in);
+        boolean exist = true;
+        while(exist) {
+            // 1. 예약 취소 화면 출력
+            System.out.println("====================================");
+            System.out.println("예약 취소를 선택하셨습니다.");
+            System.out.println("예약 번호를 조회합니다. 예약 번호를 입력해주세요");
+            System.out.print("여기에 예약번호를 입력해주세요 => ");
+            UUID cancelID = UUID.fromString(sc.next());
+            System.out.print("여기에 예약하신 전화번호 뒷 자리를 입력해주세요 => ");
+            String phoneNum = sc.next();
 
+            // 2. 예약 번호 조회
+            for (int i = 0;  i < hotel.getreservationlist().size(); i++) { // 예약 번호와 전화 번호가 맞는 경우
+                String phone = hotel.getreservationlist().get(i).getCutomer().getPhoneNumber().substring(9);
+                if(cancelID.equals(hotel.getreservationlist().get(i).getUuid()) && phoneNum.equals(phone)) {
+                    exist = false;
+                    System.out.println("====================================");
+                    System.out.println("고객 이름    : " + hotel.getreservationlist().get(i).getCutomer().getName());
+                    System.out.println("고객 번호    : " + hotel.getreservationlist().get(i).getCutomer().getPhoneNumber());
+                    System.out.println("객실        : " + hotel.getreservationlist().get(i).getHotelRoom().getroomsize());
+                    System.out.println("예약 날짜    : " + hotel.getreservationlist().get(i).getDate());
+                    System.out.println("====================================");
+                    System.out.println("위의 예약을 취소하시겠습니까?"); // 3. 예약 취소 확인
+                    System.out.println("\n1. 예.         2. 아니오.");
+                    System.out.print("여기에 번호를 입력해주세요 => ");
 
+                    int a = sc.nextInt();
+                    switch (a) {
+                        case 1 -> {   // 4. 예약 취소
+                            hotel.getreservationlist().remove(i);
+                            System.out.println("====================================");
+                            System.out.println("해당 예약을 취소했습니다.");
+                            System.out.println("초기 화면으로 돌아갑니다.");
+                        }
+                        case 2 -> {
+                            System.out.println("====================================");
+                            System.out.println("이전 화면으로 돌아갑니다.");
+                        }
+                    }
+                }
+            }
+            if(exist) {
+                System.out.println("====================================");
+                System.out.println("입력하신 예약번호 또는 전화번호 뒷 자리가 다릅니다.");
+                System.out.println("이전 화면으로 돌아갑니다.");
+            }
+        }
+    }
 } //class 끝
