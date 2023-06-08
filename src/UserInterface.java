@@ -224,13 +224,18 @@ public class UserInterface {
     }
 
     private static void printReservationlist_Customer() {   //손님측에서의 예약조회
-        System.out.println("============"+ customer.getName() + "님의 예약정보====================");
+        Scanner sc = new Scanner(System.in);
+        System.out.println("================예약조회========================");
+        System.out.print("예약번호를 입력해주세요 => ");
+        String input = sc.nextLine();
         for (int i = 0; i < hotel.getreservationlist().size(); i++) {
-            if (hotel.getreservationlist().get(i).getCutomer().getName().equals(customer.getName())) {
-                System.out.println("보유 금액: " + hotel.getreservationlist().get(i).getCutomer().getMoney() );
+            if ((hotel.getreservationlist().get(i).getUuid() + "").equals(input)) {
+                System.out.println("고객님 성함: " + hotel.getreservationlist().get(i).getCutomer().getName());
                 System.out.println("호텔방: " + hotel.getreservationlist().get(i).getHotelRoom().getroomsize()) ;
                 System.out.println("예약 일자: " + hotel.getreservationlist().get(i).getDate() );
-                System.out.println("예약 번호: " + hotel.getreservationlist().get(i).getUuid() );
+//                System.out.println("예약 번호: " + hotel.getreservationlist().get(i).getUuid() );
+//                System.out.println("보유 금액: " + hotel.getreservationlist().get(i).getCutomer().getMoney());
+//                (보유 금액)과 (예약 번호)는 표시하지 않는것이 좋아보여서 표시하지 않았습니다.
             }
         }
     }
