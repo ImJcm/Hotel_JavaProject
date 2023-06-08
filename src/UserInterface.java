@@ -204,6 +204,7 @@ public class UserInterface {
                     hotel.setTotalfunds(hotel.getTotalfunds() + hotel.getroomlist().get(roomNum-1).getroomcharge());
                     chk = false;
                     System.out.println();   //console format clean
+                    Thread.sleep(2000); //잘못될경우 삭제함
                 }
             } else {
                 System.out.println("잘못 입력하였습니다. 다시 입력해주세요.");
@@ -226,7 +227,8 @@ public class UserInterface {
         System.out.println("=======================================================");
     }
 
-    private static void printReservationlist_Customer() {   //손님측에서의 예약조회
+    private static void printReservationlist_Customer() throws InterruptedException {   //손님측에서의 예약조회
+        boolean nonHaveCheck = false;
         Scanner sc = new Scanner(System.in);
         System.out.println("================예약조회========================");
         System.out.print("예약번호를 입력해주세요 => ");
@@ -239,10 +241,16 @@ public class UserInterface {
 //                System.out.println("예약 번호: " + hotel.getreservationlist().get(i).getUuid() );
 //                System.out.println("보유 금액: " + hotel.getreservationlist().get(i).getCutomer().getMoney());
 //                (보유 금액)과 (예약 번호)는 표시하지 않는것이 좋아보여서 표시하지 않았습니다.
+                nonHaveCheck = true;
             }
         }
+        if (nonHaveCheck == false) {
+            System.out.println("예약 번호를 잘못 입력하셨습니다.");
+        }
+
+        Thread.sleep(2000);
     }
-    private static void cancelReservation() {
+    private static void cancelReservation() throws InterruptedException {
         Scanner sc = new Scanner(System.in);
         boolean exist = true;
         while(exist) {
@@ -277,10 +285,12 @@ public class UserInterface {
                             System.out.println("====================================");
                             System.out.println("해당 예약을 취소했습니다.");
                             System.out.println("초기 화면으로 돌아갑니다.");
+                            Thread.sleep(2000);
                         }
                         case 2 -> {
                             System.out.println("====================================");
                             System.out.println("이전 화면으로 돌아갑니다.");
+                            Thread.sleep(2000);
                         }
                     }
                 }
@@ -289,6 +299,7 @@ public class UserInterface {
                 System.out.println("====================================");
                 System.out.println("입력하신 예약번호 또는 전화번호 뒷 자리가 다릅니다.");
                 System.out.println("이전 화면으로 돌아갑니다.");
+                Thread.sleep(2000);
             }
         }
     }
