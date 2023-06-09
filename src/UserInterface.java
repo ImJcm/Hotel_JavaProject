@@ -14,11 +14,12 @@ public class UserInterface {
         while(start) {
             System.out.println("환영합니다. 오잉호텔입니다.");
             System.out.println("원하는 작업을 선택해주세요.");
-            System.out.println("====================================");
+            System.out.println("================================================================");
             System.out.println("1. 고객 메뉴 \t 2.관리자 메뉴 \t 3. 종료");
-            System.out.println("====================================");
-
-            int menuClick = Integer.parseInt(sc.nextLine());
+            System.out.println("================================================================");
+            System.out.print("여기에 번호를 입력해주세요 => ");
+            int menuClick = sc.nextInt();
+//            int menuClick = Integer.parseInt(sc.nextLine());
             switch(menuClick) {
                 case 1:
                     ClientDisplay();
@@ -43,12 +44,12 @@ public class UserInterface {
         while (start) {
             System.out.println("\n고객님 환영합니다. 오잉호텔입니다.");
             System.out.println("원하시는 기능의 번호를 입력해주세요.");
-            System.out.println("====================================");
+            System.out.println("================================================================");
             System.out.println("1. 호텔 예약");
             System.out.println("2. 예약 조회");
             System.out.println("3. 예약 취소");
             System.out.println("4. 종료");
-            System.out.println("====================================");
+            System.out.println("================================================================");
             System.out.print("여기에 번호를 입력해주세요 => ");
             int selectNumber = sc.nextInt();
 
@@ -79,10 +80,10 @@ public class UserInterface {
         while(start) {
             System.out.println("\n관리자님 환영합니다. 오잉호텔입니다.");
             System.out.println("원하시는 기능의 번호를 입력해주세요.");
-            System.out.println("====================================");
+            System.out.println("================================================================");
             System.out.println("1. 예약 조회");
             System.out.println("2. 종료");
-            System.out.println("====================================");
+            System.out.println("================================================================");
             System.out.print("여기에 번호를 입력해주세요 => ");
             int selectNumber = Integer.parseInt(sc.nextLine());
 
@@ -230,7 +231,7 @@ public class UserInterface {
     private static void printReservationlist_Customer() throws InterruptedException {   //손님측에서의 예약조회
         boolean nonHaveCheck = false;
         Scanner sc = new Scanner(System.in);
-        System.out.println("================예약조회========================");
+        System.out.println("========================예약조회========================");
         System.out.print("예약번호를 입력해주세요 => ");
         String input = sc.nextLine();
         for (int i = 0; i < hotel.getreservationlist().size(); i++) {
@@ -255,7 +256,7 @@ public class UserInterface {
         boolean exist = true;
         while(exist) {
             // 1. 예약 취소 화면 출력
-            System.out.println("====================================");
+            System.out.println("================================================================");
             System.out.println("예약 취소를 선택하셨습니다.");
             System.out.println("예약 번호를 조회합니다. 예약 번호를 입력해주세요");
             System.out.print("여기에 예약번호를 입력해주세요 => ");
@@ -268,12 +269,12 @@ public class UserInterface {
                 String phone = hotel.getreservationlist().get(i).getCutomer().getPhoneNumber().substring(9);
                 if(cancelID.equals(hotel.getreservationlist().get(i).getUuid()) && phoneNum.equals(phone)) {
                     exist = false;
-                    System.out.println("====================================");
+                    System.out.println("================================================================");
                     System.out.println("고객 이름    : " + hotel.getreservationlist().get(i).getCutomer().getName());
                     System.out.println("고객 번호    : " + hotel.getreservationlist().get(i).getCutomer().getPhoneNumber());
                     System.out.println("객실        : " + hotel.getreservationlist().get(i).getHotelRoom().getroomsize());
                     System.out.println("예약 날짜    : " + hotel.getreservationlist().get(i).getDate());
-                    System.out.println("====================================");
+                    System.out.println("================================================================");
                     System.out.println("위의 예약을 취소하시겠습니까?"); // 3. 예약 취소 확인
                     System.out.println("\n1. 예.         2. 아니오.");
                     System.out.print("여기에 번호를 입력해주세요 => ");
@@ -282,23 +283,23 @@ public class UserInterface {
                     switch (a) {
                         case 1 -> {   // 4. 예약 취소
                             hotel.getreservationlist().remove(i);
-                            System.out.println("====================================");
+                            System.out.println("================================================================");
                             System.out.println("해당 예약을 취소했습니다.");
-                            System.out.println("초기 화면으로 돌아갑니다.");
+                            System.out.println("2초 후 초기 화면으로 돌아갑니다.");
                             Thread.sleep(2000);
                         }
                         case 2 -> {
-                            System.out.println("====================================");
-                            System.out.println("이전 화면으로 돌아갑니다.");
+                            System.out.println("================================================================");
+                            System.out.println("2초 후 이전 화면으로 돌아갑니다.");
                             Thread.sleep(2000);
                         }
                     }
                 }
             }
             if(exist) {
-                System.out.println("====================================");
+                System.out.println("================================================================");
                 System.out.println("입력하신 예약번호 또는 전화번호 뒷 자리가 다릅니다.");
-                System.out.println("이전 화면으로 돌아갑니다.");
+                System.out.println("2초 후 이전 화면으로 돌아갑니다.");
                 Thread.sleep(2000);
             }
         }
