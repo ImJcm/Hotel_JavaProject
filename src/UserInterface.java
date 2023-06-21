@@ -78,8 +78,8 @@ public class UserInterface {
     
     public static void printAdminDisplay() {
         Scanner sc = new Scanner(System.in);
-        boolean start = true;
-        while(start) {
+        boolean isProcessEnded = true;
+        while(isProcessEnded) {
             System.out.println("\n관리자님 환영합니다. 오잉호텔입니다.");
             System.out.println("원하시는 기능의 번호를 입력해주세요.");
             System.out.println("================================================================");
@@ -95,7 +95,7 @@ public class UserInterface {
                     printReservationlist();
                     break;
                 case 2 :
-                    start = false; //시스템 종료
+                    isProcessEnded = false; //시스템 종료
                     break;
             } 
         }
