@@ -1,17 +1,19 @@
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class UserInterface {
+    private static final String pattern = "(\\d{3})(\\d{4})(\\d{4})";  //전화번호 정규식 : XXX-XXXX-XXXX
     static Hotel hotel = new Hotel();
     static Customer customer;
 
-    public static void userSelectDisplay() throws Exception{
+    public static void SelectDisplay() throws Exception{
         Scanner sc = new Scanner(System.in);
-        boolean start = true;
-        while(start) {
+        boolean isProcessEnded = true;
+        while(isProcessEnded) {
             System.out.println("환영합니다. 오잉호텔입니다.");
             System.out.println("원하는 작업을 선택해주세요.");
             System.out.println("================================================================");
@@ -19,16 +21,16 @@ public class UserInterface {
             System.out.println("================================================================");
             System.out.print("여기에 번호를 입력해주세요 => ");
             int menuClick = sc.nextInt();
-//            int menuClick = Integer.parseInt(sc.nextLine());
+            //int menuClick = Integer.parseInt(sc.nextLine());
             switch(menuClick) {
                 case 1:
-                    ClientDisplay();
+                    printClientDisplay();
                     break;
                 case 2:
-                    AdminDisplay();
+                    printAdminDisplay();
                     break;
                 case 3:
-                    start = false;
+                    isProcessEnded = false;
                     break;
                 default:
                     System.out.println("잘못된 입력입니다. 다시입력해주세요.");
@@ -37,11 +39,11 @@ public class UserInterface {
         }
     }
 
-    public static void ClientDisplay() throws Exception {
+    public static void printClientDisplay() throws Exception {
         Scanner sc = new Scanner(System.in);
-        boolean start = true;
+        boolean isProcessEnded = true;
 
-        while (start) {
+        while (isProcessEnded) {
             System.out.println("\n고객님 환영합니다. 오잉호텔입니다.");
             System.out.println("원하시는 기능의 번호를 입력해주세요.");
             System.out.println("================================================================");
@@ -68,13 +70,13 @@ public class UserInterface {
                     break;
                 case 4 :
                     customer = null;    //고객 메뉴 종료 시, 고객 정보 초기화
-                    start = false;      //시스템 종료
+                    isProcessEnded = false;      //시스템 종료
                     break;
             } // switch 끝
         } //while 끝
     } // method 끝
     
-    public static void AdminDisplay() {
+    public static void printAdminDisplay() {
         Scanner sc = new Scanner(System.in);
         boolean start = true;
         while(start) {
@@ -102,6 +104,7 @@ public class UserInterface {
     //Client
     /*
      * 예약 시, 고객 정보 등록
+     * 등록한 고객이름과 전화번호가 동일한 고객이 있다면 해당 고객을 반환하고, 등록하지않은 고객일 경우 새로운 Customer 객체 반환
      */
     private static Customer registcustomer() {
         Scanner sc = new Scanner(System.in);
@@ -109,16 +112,51 @@ public class UserInterface {
         System.out.print("이름을 입력해주세요 : ");
         String name = sc.nextLine();
 
-        System.out.print("전화번호를 입력해주세요 : ");
-        String phone = checkPhoneNumber();
+        String phone;
+        do {
+            System.out.print("전화번호를 입력해주세요 : ");
+            phone = sc.nextLine();
+        } while(!checkPhoneNumber(phone));
+        phone =  phone.replaceAll(pattern,"$1-$2-$3");
 
         System.out.print("소지금을 입력해주세요 : ");
         int money = Integer.parseInt(sc.nextLine());
 
-        return new Customer(name, phone, money);
+        if(hasCutomer(name,phone)) {
+            System.out.println("이미 등록한 고객입니다.");
+            System.out.println("소지금을 추가합니다.\n");
+            String finalPhone = phone;
+            Customer cutomer = hotel.getcustomerlist().stream().filter((c) -> c.getName().equals(name) && c.getPhoneNumber().equals(finalPhone)).toList().get(0);
+            cutomer.setMoney(cutomer.getMoney() + money);
+            return cutomer;
+        } else {
+            Long nextId;
+            if(hotel.getcustomerlist().size() == 0) {
+                nextId = 0L;
+            } else {
+                nextId = hotel.getcustomerlist().stream().max(Comparator.comparing(Customer::getId)).get().getId() + 1;
+            }
+            Customer newCutomer = new Customer(nextId,name, phone, money);
+            hotel.getcustomerlist().add(newCutomer);
+            return newCutomer;
+        }
     }
-    
-    private static String checkPhoneNumber() {
+    private static boolean hasCutomer(String username, String phonenumber) {
+        if(hotel.getcustomerlist().stream().filter((Customer c) -> c.getName().equals(username) && c.getPhoneNumber().equals(phonenumber)).toList().size() > 0) {
+            return true;
+        }
+        return false;
+    }
+    private static boolean checkPhoneNumber(String phonenumber) {
+        if(Pattern.matches(pattern, phonenumber)) {
+            return true;
+        } else {
+            System.out.println("올바른 전화번호가 아닙니다. 다시입력해주세요.");
+            return false;
+        }
+    }
+
+    /*private static String checkPhoneNumber() {
         Scanner sc = new Scanner(System.in);
         String pattern = "(\\d{3})(\\d{4})(\\d{4})";  //전화번호 정규식 : XXX-XXXX-XXXX
         boolean chk = false;
@@ -134,28 +172,29 @@ public class UserInterface {
             }
         }
         return pNum.replaceAll(pattern,"$1-$2-$3");
-    }
+    }*/
 
     /*
      * 등록된 고객 정보로 호텔 예약
      */
     private static void reservate() throws Exception{
         Scanner sc = new Scanner(System.in);
-        boolean duplicatechk = true;
-        //System.out.println("고객 정보를 등록합니다.");
-        //System.out.println("====================================");
+        boolean isduplicated = true;
+
+        //고객 등록 시, 고객 존재 여부도 검사
         customer = registcustomer();
+        // -------------------------------------------------------------
         //고객은 하루 한번의 예약만 가능 = 현재 고객정보가 예약 정보에 있다면 예약 기능 사용 불가
         //현재는 cutomer 객체의 주소값을 비교하여 예약정보가 있다면 안되는 방식으로 했지만, Hotel객체에 Customer 정보가 담긴 List가 생긴다면,
         //List에 등록 시, Customer 객체의 정보를 받아오기 때문에 주소값을 비교해도 동일한 기능을 할것으로 생각된다.
-        //---------------------------------------------------------------
+        // ---------------------------------------------------------------
         //호텔 예약 시 고객정보를 등록하는 방법을 이용하기로 했기때문에, 고객은 하루에 한번만 예약이 가능하다는 조건을 만족하기 위해
         //같은 고객인지 검사하는 방법을 객체의 주소가 아닌 전화번호(unique)로 예약 목록에 같은 전화번호가 있는지 검사한다.
         if(hotel.getreservationlist().stream().filter((Reservation r) -> r.getCutomer().getPhoneNumber().equals(customer.getPhoneNumber())).toList().size() > 0) {
-            duplicatechk = false;
+            isduplicated = false;
         }
 
-        if(!duplicatechk) {
+        if(!isduplicated) {
             System.out.println("\n이미 예약 정보가 존재합니다.");
             System.out.println("예약을 종료합니다.");
             System.out.println("2초후 고객메뉴로 돌아갑니다.....");
@@ -171,7 +210,6 @@ public class UserInterface {
          * 출력하고 자신의 고객번호를 입력하고 예약을 수행하면 되지만 이러한 방법은 고객의 정보에 본인을 식별할 수 있는 정보가 필요하기 때문에
          * 요구사항에 요구되지 않는 기능을 고려하지 않아서 고객정보를 입력받는 방식으로 구현하였다.
          */
-        //Customer customer = registcustomer();
         
         /*
          * 출력된 객실 번호 외에 다른 번호를 입력했을 때 다시 번호를 요구하는 과정에서 reservate() 함수를 재호출하고 싶지만, 
@@ -182,17 +220,24 @@ public class UserInterface {
         while(chk) {
             //호텔의 객실 리스트 출력
             System.out.println("[ 호텔 객실 리스트 ]");
-            hotel.getroomlist().stream().forEach((HotelRoom hr) -> {
-                System.out.println(String.format("%2d | %-15s | %d",hotel.getroomlist().indexOf(hr)+1,hr.getroomsize(),hr.getroomcharge()));
+            hotel.getroomlist().stream().forEach((Room hr) -> {
+                if(!hr.getisReserved()) {
+                    System.out.println(String.format("%2d | %-15s | %d | 예약가능",hotel.getroomlist().indexOf(hr)+1,hr.getroomsize(),hr.getroomcharge()));
+                } else {
+                    System.out.println(String.format("\u001B[31m%2d | %-15s | %d | 예약 불가능\u001b[0m ",hotel.getroomlist().indexOf(hr)+1,hr.getroomsize(),hr.getroomcharge()));
+                }
             });
             
             //예약을 위한 객실 번호 입력
             int roomNum = Integer.parseInt(sc.nextLine());
             if(roomNum > 0 && roomNum <= hotel.getroomlist().size()) {
-                if(customer.getMoney() < hotel.getroomlist().get(roomNum-1).getroomcharge()) {
+                if (customer.getMoney() < hotel.getroomlist().get(roomNum-1).getroomcharge()) {
                     System.out.println("소지금이 부족합니다. 다른 방을 선택해주세요.");
+                } else if (hotel.getroomlist().get(roomNum-1).getisReserved()) {
+                    System.out.println("이미 예약이 된 방입니다. 다른 방을 선택해주세요.");
                 } else {
                     Reservation newReservation = new Reservation(customer, hotel.getroomlist().get(roomNum-1), OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+                    hotel.getroomlist().get(roomNum-1).setisReserved(true);
                     hotel.getreservationlist().add(newReservation);
                     System.out.println("예약에 성공하였습니다.");
                     System.out.println("예약번호 : " + newReservation.getUuid());
@@ -219,7 +264,7 @@ public class UserInterface {
         hotel.getreservationlist().forEach((Reservation r) -> {
             System.out.println("예약순번 : " + (hotel.getreservationlist().indexOf(r)+1));
             System.out.println("예약번호 : " + r.getUuid());
-            System.out.println("객실 : " + r.getHotelRoom().getroomsize());
+            System.out.println("객실 : " + r.getRoom().getroomsize());
             System.out.println("고객이름 : " + r.getCutomer().getName());
             System.out.println("고객 전화번호 : " + r.getCutomer().getPhoneNumber());
             System.out.println("예약날짜 : " + r.getDate());
@@ -237,7 +282,7 @@ public class UserInterface {
         for (int i = 0; i < hotel.getreservationlist().size(); i++) {
             if ((hotel.getreservationlist().get(i).getUuid() + "").equals(input)) {
                 System.out.println("고객님 성함: " + hotel.getreservationlist().get(i).getCutomer().getName());
-                System.out.println("호텔방: " + hotel.getreservationlist().get(i).getHotelRoom().getroomsize()) ;
+                System.out.println("호텔방: " + hotel.getreservationlist().get(i).getRoom().getroomsize()) ;
                 System.out.println("예약 일자: " + hotel.getreservationlist().get(i).getDate() );
 //                System.out.println("예약 번호: " + hotel.getreservationlist().get(i).getUuid() );
 //                System.out.println("보유 금액: " + hotel.getreservationlist().get(i).getCutomer().getMoney());
@@ -272,7 +317,7 @@ public class UserInterface {
                     System.out.println("================================================================");
                     System.out.println("고객 이름    : " + hotel.getreservationlist().get(i).getCutomer().getName());
                     System.out.println("고객 번호    : " + hotel.getreservationlist().get(i).getCutomer().getPhoneNumber());
-                    System.out.println("객실        : " + hotel.getreservationlist().get(i).getHotelRoom().getroomsize());
+                    System.out.println("객실        : " + hotel.getreservationlist().get(i).getRoom().getroomsize());
                     System.out.println("예약 날짜    : " + hotel.getreservationlist().get(i).getDate());
                     System.out.println("================================================================");
                     System.out.println("위의 예약을 취소하시겠습니까?"); // 3. 예약 취소 확인
@@ -282,6 +327,11 @@ public class UserInterface {
                     int a = sc.nextInt();
                     switch (a) {
                         case 1 -> {   // 4. 예약 취소
+                            // 취소 금액 반환
+                            hotel.getreservationlist().get(i).getCutomer().setMoney(hotel.getreservationlist().get(i).getCutomer().getMoney() + hotel.getreservationlist().get(i).getRoom().getroomcharge());
+                            // 취소 방 반환
+                            hotel.getreservationlist().get(i).getRoom().setisReserved(false);
+
                             hotel.getreservationlist().remove(i);
                             System.out.println("================================================================");
                             System.out.println("해당 예약을 취소했습니다.");

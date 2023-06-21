@@ -1,13 +1,19 @@
 public class Customer {
-    // 고객은 고객은 이름, 전화번호, 소지금을 가진다.
+    // 고객은 고객은 id, 이름, 전화번호, 소지금을 가진다.
+    private Long id;
     private String name;
     private String phoneNumber;
     private int money;
 
-    public Customer(String name, String phone, int money) {
+    public Customer(Long id, String name, String phone, int money) {
+        this.id = id;
         this.name = name;
         this.phoneNumber = phone;
         this.money = money;
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     public String getName() {
