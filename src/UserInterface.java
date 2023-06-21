@@ -9,9 +9,9 @@ public class UserInterface {
     private static final String pattern = "(\\d{3})(\\d{4})(\\d{4})";  //전화번호 정규식 : XXX-XXXX-XXXX
     static Hotel hotel = new Hotel();
     static Customer customer;
+    private static Scanner sc = new Scanner(System.in);
 
     public static void SelectDisplay() throws Exception{
-        Scanner sc = new Scanner(System.in);
         boolean isProcessEnded = true;
         while(isProcessEnded) {
             System.out.println("환영합니다. 오잉호텔입니다.");
@@ -39,7 +39,6 @@ public class UserInterface {
     }
 
     public static void printClientDisplay() throws Exception {
-        Scanner sc = new Scanner(System.in);
         boolean isProcessEnded = true;
 
         while (isProcessEnded) {
@@ -76,7 +75,6 @@ public class UserInterface {
     } // method 끝
     
     public static void printAdminDisplay() {
-        Scanner sc = new Scanner(System.in);
         boolean isProcessEnded = true;
         while(isProcessEnded) {
             System.out.println("\n관리자님 환영합니다. 오잉호텔입니다.");
@@ -106,7 +104,6 @@ public class UserInterface {
      * 등록한 고객이름과 전화번호가 동일한 고객이 있다면 해당 고객을 반환하고, 등록하지않은 고객일 경우 새로운 Customer 객체 반환
      */
     private static Customer registcustomer() {
-        Scanner sc = new Scanner(System.in);
         System.out.println("환영합니다. 오잉호텔입니다. 고객 정보를 등록합니다.");
         System.out.print("이름을 입력해주세요 : ");
         String name = sc.nextLine();
@@ -177,7 +174,6 @@ public class UserInterface {
      * 등록된 고객 정보로 호텔 예약
      */
     private static void reservate() throws Exception{
-        Scanner sc = new Scanner(System.in);
         boolean isduplicated = true;
 
         //고객 등록 시, 고객 존재 여부도 검사
@@ -189,6 +185,10 @@ public class UserInterface {
         // ---------------------------------------------------------------
         //호텔 예약 시 고객정보를 등록하는 방법을 이용하기로 했기때문에, 고객은 하루에 한번만 예약이 가능하다는 조건을 만족하기 위해
         //같은 고객인지 검사하는 방법을 객체의 주소가 아닌 전화번호(unique)로 예약 목록에 같은 전화번호가 있는지 검사한다.
+        // --------------------------------------------------------------
+        //등록된 고객인지 아닌지는 고객의 이름과 휴대전화를 통해 registcutomer()에서 검사하고, 아래 조건문을 통해 이미 등록된 고객이면 해당 고객 객체를 반환하고
+        //새로운 고객이면 새로운 고객 객체를 반환하여 hotel 측에 저장된 예약 목록에 해당 고객이 예약한 고객의 휴대전화 정보가 있는지 검사한다.
+        //휴대전화로 검사한 이유는 유일한 값이기 때문에 가능하다고 판단했다.
         if(hotel.getreservationlist().stream().filter((Reservation r) -> r.getCutomer().getPhoneNumber().equals(customer.getPhoneNumber())).toList().size() > 0) {
             isduplicated = false;
         }
@@ -274,7 +274,6 @@ public class UserInterface {
 
     private static void printReservationlist_Customer() throws InterruptedException {   //손님측에서의 예약조회
         boolean nonHaveCheck = false;
-        Scanner sc = new Scanner(System.in);
         System.out.println("========================예약조회========================");
         System.out.print("예약번호를 입력해주세요 => ");
         String input = sc.nextLine();
@@ -296,7 +295,6 @@ public class UserInterface {
         Thread.sleep(2000);
     }
     private static void cancelReservation() throws InterruptedException {
-        Scanner sc = new Scanner(System.in);
         boolean exist = true;
         while(exist) {
             // 1. 예약 취소 화면 출력
