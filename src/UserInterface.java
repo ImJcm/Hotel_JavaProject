@@ -332,10 +332,10 @@ public class UserInterface {
                             // 취소 방 반환
                             hotel.getreservationlist().get(i).getRoom().setisReserved(false);
 
-                            hotel.getreservationlist().remove(i);
                             System.out.println("================================================================");
                             System.out.println("해당 예약을 취소했습니다.");
                             System.out.println("2초 후 초기 화면으로 돌아갑니다.");
+                            hotel.getreservationlist().remove(i);
                             Thread.sleep(2000);
                         }
                         case 2 -> {
