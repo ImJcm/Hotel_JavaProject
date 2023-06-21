@@ -328,6 +328,7 @@ public class UserInterface {
                         case 1 -> {   // 4. 예약 취소
                             // 취소 금액 반환
                             hotel.getreservationlist().get(i).getCutomer().setMoney(hotel.getreservationlist().get(i).getCutomer().getMoney() + hotel.getreservationlist().get(i).getRoom().getroomcharge());
+                            System.out.println(hotel.getreservationlist().get(i).getCutomer().getName() + "고객님의 총 보유금액 : " + hotel.getreservationlist().get(i).getCutomer().getMoney());
                             // 취소 방 반환
                             hotel.getreservationlist().get(i).getRoom().setisReserved(false);
 
