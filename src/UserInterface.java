@@ -21,7 +21,6 @@ public class UserInterface {
             System.out.println("================================================================");
             System.out.print("여기에 번호를 입력해주세요 => ");
             int menuClick = sc.nextInt();
-            //int menuClick = Integer.parseInt(sc.nextLine());
             switch(menuClick) {
                 case 1:
                     printClientDisplay();

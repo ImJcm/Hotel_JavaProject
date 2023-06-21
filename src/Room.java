@@ -4,7 +4,7 @@ public class Room {
     // 객실은 크기, 숙박비를 가진다.
     private String roomSize; // 방 크기
     private int roomCharge; // 숙박비
-    private boolean isReserved = false; // 예약여부
+    private boolean isReserved = false; // 예약 여부
 
     public Room(String roomsize, int roomcharge, boolean isReserved) {
         this.roomSize = roomsize;

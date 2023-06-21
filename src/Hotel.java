@@ -6,7 +6,7 @@ public class Hotel {
     //객실 정보
     private List<Room> roomlist;   //객실 정보
     private List<Reservation> reservationlist;  //예약 정보
-    private List<Customer> customerlist;    //고객 정보
+    private List<Customer> customerlist;    //등록 고객 정보
 
     public Hotel() {
         //객실 초기 정보 추가
